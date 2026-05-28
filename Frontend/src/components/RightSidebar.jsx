@@ -1,5 +1,4 @@
-import React from "react";
-import { imagesDummyData } from "../assets/assets";
+import assets, { imagesDummyData } from "../assets/assets";
 
 const RightSidebar = ({ selectedUser }) => {
   return (
@@ -36,7 +35,7 @@ const RightSidebar = ({ selectedUser }) => {
             })}
           </div>
         </div>
-        <button className="mx-auto block bg-linear-to-r from-purple-400 to-violet-600 text-white border-none text-sm font-light py-2 px-20 rounded-full cursor-pointer mt-5">
+        <button className="mx-auto block bg-linear-to-r from-purple-400 to-violet-600 text-white border-none text-sm font-light py-2 px-20 rounded-full cursor-pointer mt-5 mb-5">
           Logout
         </button>
       </div>
