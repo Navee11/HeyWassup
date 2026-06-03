@@ -1,8 +1,10 @@
 import { generateToken } from "../lib/utils.js";
 import User from "../models/User.js";
 import express from "express";
+import bcrypt from "bcryptjs";
 
-export const signUp = async () => {
+export const signUp = async (req, res) => {
+  console.log(req.body);
   const { fullName, email, password, bio } = req.body;
   try {
     if (!fullName || !email || !password || !bio) {
@@ -12,8 +14,9 @@ export const signUp = async () => {
     if (user) {
       return res.json({ success: false, message: "Account already exist" });
     }
-    const salt = await genSalt(10);
+    const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+    console.log("Before User.create");
     const newUser = await User.create({
       fullName,
       email,
@@ -21,6 +24,7 @@ export const signUp = async () => {
       bio,
     });
 
+    console.log("After User.create");
     const token = generateToken(newUser._id);
     res.json({
       success: true,
@@ -28,6 +32,7 @@ export const signUp = async () => {
       token,
       message: "Account created successfullly",
     });
+    console.log("After generateToken");
   } catch (error) {
     console.log(error.message);
     res.json({
@@ -38,7 +43,7 @@ export const signUp = async () => {
 };
 
 //conroller to login user
-export const login = async () => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const userData = await User.findOne({ email });
