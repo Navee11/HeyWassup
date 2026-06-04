@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import assets from "../assets/assets";
+import AuthContext from "../../context/AuthContext";
 
 const Loginpage = () => {
   const [currState, setCurrentState] = useState("SignUp");
@@ -9,12 +10,20 @@ const Loginpage = () => {
   const [password, setPassword] = useState("");
   const [isDataSubmitted, setIsDataSubmitted] = useState(false);
 
+  const { login } = useContext(AuthContext);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (currState === "SignUp" && !isDataSubmitted) {
       setIsDataSubmitted(true);
       return;
     }
+    login(currState === "SignUp" ? "signup" : "login", {
+      fullName,
+      email,
+      password,
+      bio,
+    });
   };
   return (
     <div className="min-h-screen bg-cover bg-center flex items-center justify-center gap-8 sm:justify-evenly max-sm:flex-col backdrop-blur-2xl">
@@ -23,8 +32,7 @@ const Loginpage = () => {
       {/* right */}
       <form
         onSubmit={handleSubmit}
-        className="border-2 bg-white/8 text-white border-gray-500 p-6 flex flex-col gap-6 rounded-lg shadow-lg"
-      >
+        className="border-2 bg-white/8 text-white border-gray-500 p-6 flex flex-col gap-6 rounded-lg shadow-lg">
         <h2 className="font-medium text-2xl flex justify-between items-center">
           {currState}
           {isDataSubmitted && (
@@ -59,7 +67,7 @@ const Loginpage = () => {
             <input
               onChange={(e) => setPassword(e.target.value)}
               value={password}
-              type="text"
+              type="password"
               className="p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               placeholder="Password"
               required
@@ -68,18 +76,16 @@ const Loginpage = () => {
         )}
         {currState === "SignUp" && isDataSubmitted && (
           <textarea
-            onChange={(e) => e.target.value}
+            onChange={(e) => setBio(e.target.value)}
             value={bio}
             rows={4}
             className="p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             placeholder="Provide a bio..."
-            required
-          ></textarea>
+            required></textarea>
         )}
         <button
           type="submit"
-          className="py-3 bg-linear-to-r from-purple-400 to-voilet-600 text-white rounded-md cursor-pointer"
-        >
+          className="py-3 bg-linear-to-r from-purple-400 to-voilet-600 text-white rounded-md cursor-pointer">
           {currState === "SignUp" ? "Create Account" : "Login Now"}
         </button>
         <div className="flex items-center gap-2 text-sm text-gray-500">
@@ -94,10 +100,9 @@ const Loginpage = () => {
               <span
                 onClick={() => {
                   setCurrentState("Login");
-                  setDataSubmitted(false);
+                  setIsDataSubmitted(false);
                 }}
-                className="font-medium text-violet-500 cursor-pointer"
-              >
+                className="font-medium text-violet-500 cursor-pointer">
                 Login here
               </span>
             </p>
@@ -109,8 +114,7 @@ const Loginpage = () => {
                   setCurrentState("SignUp");
                   setDataSubmitted(true);
                 }}
-                className="font-medium text-violet-500 cursor-pointer"
-              >
+                className="font-medium text-violet-500 cursor-pointer">
                 Click here
               </span>
             </p>

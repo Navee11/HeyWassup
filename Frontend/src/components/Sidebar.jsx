@@ -1,15 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import assets, { userDummyData } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
+import AuthContext from "../../context/AuthContext";
 const Sidebar = ({ selectedUser, setSelectedUser }) => {
   const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
   useEffect(() => {
     console.log(selectedUser);
   }, [selectedUser]);
   return (
     <div
-      className={`bg-[#818582]/10 h-full p-5 rounded-r-xl overflow-y-scroll text-white ${selectedUser ? "max-md:hidden" : ""}`}
-    >
+      className={`bg-[#818582]/10 h-full p-5 rounded-r-xl overflow-y-scroll text-white ${selectedUser ? "max-md:hidden" : ""}`}>
       <div className="pb-5">
         <div className="flex justify-between items-center">
           <img src={assets.logo} alt="logo" className="max-w-40" />
@@ -22,12 +23,13 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
             <div className="absolute top-full right-0 z-20 w-32 p-5 rounded-md bg-[#282142] border border-gray-600 text-gray-100 hidden group-hover:block">
               <p
                 onClick={() => navigate("/profile")}
-                className="cursor-pointer text-sm"
-              >
+                className="cursor-pointer text-sm">
                 Edit Profile
               </p>
               <hr className="my-2  border-t-gray-500" />
-              <p className="cursor-pointer text-sm">Logout</p>
+              <p onClick={logout} className="cursor-pointer text-sm">
+                Logout
+              </p>
             </div>
           </div>
         </div>
@@ -44,8 +46,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
             <div
               onClick={() => setSelectedUser(user)}
               key={index}
-              className={`relative flex items-center gap-2 p-2 pl-4 rounded cursor-pointer max-sm:text-sm ${selectedUser?._id === user._id && "bg-[#282142]/50"}`}
-            >
+              className={`relative flex items-center gap-2 p-2 pl-4 rounded cursor-pointer max-sm:text-sm ${selectedUser?._id === user._id && "bg-[#282142]/50"}`}>
               <img
                 src={user?.profilePic || assets.avatar_icon}
                 alt=""
