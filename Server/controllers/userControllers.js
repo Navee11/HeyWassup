@@ -2,9 +2,9 @@ import { generateToken } from "../lib/utils.js";
 import User from "../models/User.js";
 import express from "express";
 import bcrypt from "bcryptjs";
+import cloudinary from "../lib/cloudinary.js";
 
 export const signUp = async (req, res) => {
-  console.log(req.body);
   const { fullName, email, password, bio } = req.body;
   try {
     if (!fullName || !email || !password || !bio) {
@@ -16,7 +16,6 @@ export const signUp = async (req, res) => {
     }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    console.log("Before User.create");
     const newUser = await User.create({
       fullName,
       email,
@@ -24,7 +23,6 @@ export const signUp = async (req, res) => {
       bio,
     });
 
-    console.log("After User.create");
     const token = generateToken(newUser._id);
     res.json({
       success: true,
@@ -32,7 +30,6 @@ export const signUp = async (req, res) => {
       token,
       message: "Account created successfullly",
     });
-    console.log("After generateToken");
   } catch (error) {
     console.log(error.message);
     res.json({
@@ -47,8 +44,9 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const userData = await User.findOne({ email });
+    console.log(userData);
 
-    const isPassword = await bcrypt.compare(userData.password);
+    const isPassword = await bcrypt.compare(password, userData.password);
 
     if (!isPassword) {
       return res.json({ success: false, message: "Invalid Credentials" });
@@ -86,7 +84,9 @@ export const updateProfile = async (req, res) => {
         { new: true },
       );
     } else {
+      console.log("Profile pic upload");
       const upload = await cloudinary.uploader.upload(profilePic);
+      console.log(upload);
       updatedUser = await User.findByIdAndUpdate(
         userId,
         { profilePic: upload.secure_url, bio, fullName },
